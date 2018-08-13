@@ -1,11 +1,11 @@
 import React, { Component} from 'react';
 
 class TodoList extends Component {
-    delete = (event,key) => {
-        this.props.delete(event,key);
+    delete = (id) => {
+        this.props.delete(id);
     }
-    completed = (key) => {
-        this.props.completed(key);
+    completed = (event,id) => {
+        this.props.completed(event,id);
     }
     render() {
         const {
@@ -15,11 +15,16 @@ class TodoList extends Component {
         return (
             <ul className="list-group list-group-flush">
                 {   
-                    props.list.map((item,index) =>
-                    <li className="list-style" key={index} checked={props.checked[index]}>
-                    <span onClick = { () => this.completed(index) }>{item}</span>
+                    props.list.map((items) =>
+                    <li className="list-style" key={items.id} checked={items.isChecked}>
+                        { items.isChecked ? (
+
+                            <span className="completed" onClick = { (event) => this.completed(event,items.id) }>{items.item}</span>
+                        ) : (
+                            <span className="notCompleted" onClick = { (event) => this.completed(event,items.id) }>{items.item}</span>
+                        )} 
                     <button className="btn btn-danger btn-sm del-style fa fa-trash" 
-                    onClick={(event) => this.delete(event,index)}></button>
+                    onClick={() => this.delete(items.id)}></button>
                     </li>)
                 }
             </ul>

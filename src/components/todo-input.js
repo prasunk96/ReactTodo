@@ -6,9 +6,13 @@ class TodoInput extends Component {
         super(props);
         this.state = {
             todo: '',
-            list: [],
-            checked: []
+            list: [{
+                id: '',
+                item: '',
+                isChecked: ''
+            }],
         };
+        this.state.list.pop();
     }
     updateInput = (event) => {
         this.setState({
@@ -16,52 +20,48 @@ class TodoInput extends Component {
         });
     }
     onClick = () => {
-        let newVal = this.state.list.slice();
-        let newDoneVal = this.state.checked.slice();
+        let newList = this.state.list.slice();
         if(this.state.todo.toLowerCase()!=="") {
-            newVal.push(this.state.todo);
-            newDoneVal.push(false);
+            newList.push({
+                id: Math.random(),
+                item: this.state.todo,
+                isChecked: false
+            })
         }
         this.setState({
                 todo: '',
-                list: newVal,
-                checked: newDoneVal
+                list: newList 
         })
     }
-    deleteItem = (event,key) => {
+    deleteItem = (id) => {
+        let newList = this.state.list.slice();
+            for(let i=0;i<newList.length;i++) {
+                if(newList[i].id === id) {
+                    newList.splice(i,1);
+                    break;
+                }
+            }
+            this.setState({
+                list: newList,
+            });
+    }
+    completeItem = (event,id) => {
         event.preventDefault();
-        let newVal = this.state.list.slice();
-        let newCheckedVal = this.state.checked.slice();
-            newVal.splice(key,1);
-            newCheckedVal.splice(key,1);
-            this.setState({
-                list: newVal,
-                checked: newCheckedVal
-            });
-    }
-    completeItem = (key) => {
-        //console.log(key);
-        //event.preventDefault();
-        let newC = this.state.checked.slice();
-        let newL = document.getElementsByClassName("list-style");
-        //console.log(this.state.checked);
-        //console.log(newL[key].checked);
-        if(newL[key].checked===false) {
-            newC[key]=true;
-            this.setState({
-                checked: newC,
-            });
-        } else if(newL[key].checked===true) {
-            newC[key]=false;
-            this.setState({
-                checked: newC,
-            });
+        let newList = this.state.list.slice();
+        for(let i=0;i<newList.length;i++) {
+            if(newList[i].id===id) {
+                if(newList[i].id === id && newList[i].isChecked === false) {
+                    newList[i].isChecked=true;
+                }
+                else if(newList[i].id === id && newList[i].isChecked === true){
+                    newList[i].isChecked=false;
+                }
+            }
         }
-        newL[key].firstChild.classList.toggle("completed");
-        //console.log(newL[key].firstChild);     
-        //console.log(this.state.checked);
+        this.setState({
+            list: newList
+        })
     }
-
     render () {
         return (
             <div>
@@ -71,8 +71,10 @@ class TodoInput extends Component {
                         <button className="btn btn-outline-secondary" type="button" onClick={this.onClick}>Add</button>
                     </div>
                 </div>
-                <div className="card">
-                    <TodoList list = {this.state.list} checked = {this.state.checked} completed = {this.completeItem} delete = {this.deleteItem} />
+                <div className="card"> 
+                    {
+                        <TodoList list = {this.state.list} completed = {this.completeItem} delete = {this.deleteItem} />
+                    }
                 </div>
             </div>
         );
