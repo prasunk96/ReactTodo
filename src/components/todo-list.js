@@ -1,11 +1,13 @@
 import React, { Component} from 'react';
+import {connect} from 'react-redux';
+import deleteActionCreator from '../store/ActionCreator';
 
 class TodoList extends Component {
     delete = (id) => {
         this.props.delete(id);
     }
     completed = (event,id) => {
-        this.props.completed(event,id);
+        deleteActionCreator(id);
     }
     render() {
         const {
@@ -32,5 +34,10 @@ class TodoList extends Component {
     }
 }
 
-export default TodoList;
+const mapStateToProps = state => {
+    return {
+        list: state.list
+    }
+}
+export default connect(mapStateToProps)(TodoList);
 

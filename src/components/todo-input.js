@@ -1,67 +1,59 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import TodoList from './todo-list';
 
 class TodoInput extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            todo: '',
-            list: [{
-                id: '',
-                item: '',
-                isChecked: ''
-            }],
+            todo: ''
         };
-        this.state.list.pop();
     }
     updateInput = (event) => {
         this.setState({
             todo: event.target.value, 
         });
     }
+
     onClick = () => {
-        let newList = this.state.list.slice();
-        if(this.state.todo.toLowerCase()!=="") {
-            newList.push({
-                id: Math.random(),
-                item: this.state.todo,
-                isChecked: false
-            })
-        }
-        this.setState({
-                todo: '',
-                list: newList 
-        })
+        console.log("adding item");
+        console.log(this.state.todo);
+        this.props.addItem(this.state.todo);
     }
+
     deleteItem = (id) => {
-        let newList = this.state.list.slice();
-            for(let i=0;i<newList.length;i++) {
-                if(newList[i].id === id) {
-                    newList.splice(i,1);
-                    break;
-                }
-            }
-            this.setState({
-                list: newList,
-            });
+        console.log("reomving item");
+        this.props.removeItem(id);
+        //let newList = this.state.list.slice();
+            // for(let i=0;i<newList.length;i++) {
+            //     if(newList[i].id === id) {
+            //         newList.splice(i,1);
+            //         break;
+            //     }
+            // }
+            // this.setState({
+            //     list: newList,
+            // });
     }
-    completeItem = (event,id) => {
-        event.preventDefault();
-        let newList = this.state.list.slice();
-        for(let i=0;i<newList.length;i++) {
-            if(newList[i].id===id) {
-                if(newList[i].id === id && newList[i].isChecked === false) {
-                    newList[i].isChecked=true;
-                }
-                else if(newList[i].id === id && newList[i].isChecked === true){
-                    newList[i].isChecked=false;
-                }
-            }
-        }
-        this.setState({
-            list: newList
-        })
-    }
+
+    // completeItem = (event,id) => {
+    //     event.preventDefault();
+    //     let newList = this.state.list.slice();
+    //     for(let i=0;i<newList.length;i++) {
+    //         if(newList[i].id===id) {
+    //             if(newList[i].id === id && newList[i].isChecked === false) {
+    //                 newList[i].isChecked=true;
+    //             }
+    //             else if(newList[i].id === id && newList[i].isChecked === true){
+    //                 newList[i].isChecked=false;
+    //             }
+    //         }
+    //     }
+    //     this.setState({
+    //         list: newList
+    //     })
+    // }
+
     render () {
         return (
             <div>
@@ -81,4 +73,23 @@ class TodoInput extends Component {
     }
 }
 
-export default TodoInput;
+const mapDispatchToProps = dispatch => {
+    return {
+        addItem : (value) => dispatch({
+            type: "ADD_TODO",
+            payload: {
+                id: Math.random(),
+                item: value,
+                isChecked: false
+            }
+        }),
+        removeItem : (value) => dispatch({
+            type: "REMOVE_ITEM",
+            payload: {
+                id: value
+            }
+        })
+    }
+}
+
+export default connect(null, mapDispatchToProps)(TodoInput);

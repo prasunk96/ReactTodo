@@ -3,8 +3,13 @@ import logo from './logo.svg';
 import './App.css';
 import TodoInput from './components/todo-input';
 
+import getTodoActionCreator from "./store/ActionCreator";
+import connect from "react-redux/lib/connect/connect";
 
 class App extends Component {
+  componentDidMount() {
+    this.props.fetchList();
+  }
   render() {
     return (
       <div className="App">
@@ -22,4 +27,9 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchList: () => dispatch(getTodoActionCreator)
+  }
+}
+export default connect(null, mapDispatchToProps)(App);
